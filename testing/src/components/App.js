@@ -1,19 +1,36 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import CommentBox from 'components/CommentBox';
 import CommentList from 'components/CommentList';
+import * as actions from 'actions';
+import 'index.css';
 
-export default class App extends Component {
-  renderButton() {}
+class App extends Component {
+  renderButton() {
+    if (this.props.auth) {
+      return (
+        <button className='button' onClick={() => this.props.changeAuth(false)}>
+          Sign Out
+        </button>
+      );
+    } else {
+      return (
+        <button className='button' onClick={() => this.props.changeAuth(true)}>
+          Sign In
+        </button>
+      );
+    }
+  }
 
   renderHeader() {
     return (
-      <ul>
+      <ul className='nav'>
         <li>
-          <Link to="/">Home</Link>
+          <Link to='/'>Home</Link>
         </li>
         <li>
-          <Link to="/post">Post A Comment</Link>
+          <Link to='/post'>Post a Comment</Link>
         </li>
         <li>{this.renderButton()}</li>
       </ul>
@@ -23,9 +40,16 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <Route path="/post" component={CommentBox} />
-        <Route path="/" exact component={CommentList} />
+        {this.renderHeader()}
+        <Route path='/post' component={CommentBox} />
+        <Route path='/' exact component={CommentList} />
       </div>
     );
   }
 }
+
+function mapStateToProps(state) {
+  return { auth: state.auth };
+}
+
+export default connect(mapStateToProps, actions)(App);
